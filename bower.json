@@ -18,7 +18,8 @@
     "highcharts": "^6.0.7",
     "neon-animation": "PolymerElements/neon-animation#^2.1.0",
     "lodash": "^4.17.5",
-    "iron-selector": "PolymerElements/iron-selector#^2.0.1"
+    "iron-selector": "PolymerElements/iron-selector#^2.0.1",
+    "web-animations-js": "~2.2.5"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0",
