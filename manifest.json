@@ -1,0 +1,7 @@
+{
+  "name": "model-summaries-tracker",
+  "short_name": "model-summaries-tracker",
+  "description": "tracker for changes in weight over time",
+  "start_url": "/",
+  "display": "standalone"
+}

@@ -1,0 +1,279 @@
+<!-- dependencies for all -->
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animation.html">
+<link rel="import" href="../bower_components/neon-animation/web-animations.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="shared-styles.html">
+<!-- If there are any tables: -->
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-sorter.html">
+
+
+<dom-module id="model-summaries-tracker-app">
+  <template>
+    <style>
+    :host {
+        --app-primary-color: #4285f4;
+        --app-secondary-color: black;
+        display: block;
+      }
+
+      .dropdown-item {
+        cursor: pointer;
+      }
+
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
+      }
+
+      .drawer-content {
+        margin: 0 20px;
+      }
+
+      paper-card#loadingData {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        min-height: 100vh;
+      }
+
+      paper-button.className {
+        background: var(--app-primary-color);
+        color: #FFF;
+      }
+
+      .data-wrapper {
+        background-color: var(--paper-grey-300);
+        display: grid;
+        grid-template-columns: 5fr 5fr 0.5fr;
+      }
+
+    </style>
+    <!-- <iron-ajax id="get-latest-fe-commit" method="GET" url="https://api.github.com/repos/lakopite/{*REPONAME*}/git/refs/heads/master" handle-as="json" on-response="handleGetLatestFeCommitResp" on-error="handleGetLatestCommitError"></iron-ajax>
+    <iron-ajax id="get-latest-fe-commit-date" method="GET" url="https://api.github.com/repos/lakopite/{*REPONAME*}/git/commits/[[feSha]]" handle-as="json" on-response="handleGetLatestFeCommitDateResp" on-error="handleGetLatestCommitDateError"></iron-ajax>
+    <iron-ajax id="get-latest-be-commit" method="GET" url="https://api.github.com/repos/{*REPONAME*}/git/refs/heads/master" handle-as="json" on-response="handleGetLatestBeCommitResp" on-error="handleGetLatestCommitError"></iron-ajax>
+    <iron-ajax id="get-latest-be-commit-date" method="GET" url="https://api.github.com/repos/lakopite/{*REPONAME*}/git/commits/[[beSha]]" handle-as="json" on-response="handleGetLatestBeCommitDateResp" on-error="handleGetLatestCommitDateError"></iron-ajax> -->
+    <!-- <iron-ajax id="get-data" method="GET" url="http://americasgis.arup.com/NLVSBaseRxnSummariesExternal/api/v1/get_data" handle-as="json" on-response="handleGetDataResp" on-error="handleGetDataError"></iron-ajax> -->
+    <template is="dom-if" if="{{isLoading}}">
+      <paper-card id="loadingData">
+        <h3>Loading data, please wait</h3>
+        <paper-spinner active></paper-spinner>
+      </paper-card>
+    </template>
+    <template is="dom-if" if="{{!isLoading}}">
+      <app-drawer-layout fullbleed>
+      <!-- Drawer content -->
+        <app-drawer id="drawer" slot="drawer">
+            <div style="height: 100%; overflow: auto;">
+              <app-toolbar>
+                <paper-item>Test</paper-item>
+              </app-toolbar>
+              <div class="drawer-content">
+                <paper-dropdown-menu id="parentModelDropdown" label="Select Model">
+                  <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{selectedParentModel}}">
+                    <template is="dom-repeat" items="[[parentModelList]]">
+                      <paper-item class="dropdown-item" name="[[item]]">[[_prettify(item)]]</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              </div>
+            </div>
+          </app-drawer>
+        <!-- Main content -->
+        <app-header-layout has-scrolling-region>
+          <app-header slot="header" medium-tall>
+            <app-toolbar>
+              <div main-title>App name</div>
+              <paper-item>Build Dates</paper-item>
+              <!-- <paper-item>FE: [[frontEndBuildDate]]</paper-item>
+              <paper-item>BE: [[backendBuildDate]]</paper-item> -->
+            </app-toolbar>
+            <app-toolbar>
+            <paper-tabs bottom-item attr-for-selected="name" selected="{{selectedView}}">
+              <paper-tab name="data-view">Data</paper-tab>
+              <paper-tab name="chart-view">Chart</paper-tab>
+              <paper-tab name="faq-view">FAQ</paper-tab>
+            </paper-tabs>
+            </app-toolbar>
+          </app-header>
+          <iron-pages style="height:100%;" attr-for-selected="name" selected="{{selectedView}}">
+          <!-- Table Tab -->
+          <div name="data-view">
+            <div class="data-content">
+              <div class="data-wrapper">
+                <app-toolbar class="aggregation-toolbar">
+                  <div main-title>Data Overview</div>
+                </app-toolbar>
+                <paper-dropdown-menu id="force-dropdown" label="Select Force">
+                  <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{selectedForce}}">
+                    <template is="dom-repeat" items="[[forceList]]">
+                      <paper-item class="dropdown-item" name="[[item]]">[[item]]</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              </div>
+              <paper-card heading="Summary" class="data-info-cards">
+                <vaadin-grid class="summary-table" items="[[tableData]]">
+                    <template is="dom-repeat" items="[[pluckColumns(tableData)]]" as="column">
+                      <vaadin-grid-column width="100px">
+                        <!-- <template class="header">[[_prettify(column)]]</template>
+                        <template>[[ pluckValue(tableData) ]]</template> -->
+                      </vaadin-grid-column>
+                    </template>
+                  </vaadin-grid>
+              </paper-card>
+            </div>
+          </div>
+          <!-- Chart Tab -->
+          <div name="chart-view">
+          </div>
+          <!-- FAQ Tab -->
+          <div name="faq-view">
+          </div>
+
+          </iron-pages>
+        </app-header-layout>
+      </app-drawer-layout>
+    </template>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class ModelSummariesTrackerApp extends Polymer.Element {
+      static get is() { return 'model-summaries-tracker-app'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'model-summaries-tracker-app'
+          },
+          // isLoading: {
+          //   type: Boolean,
+          //   value: true
+          // },
+          isLoading: {
+            type: Boolean,
+            value: false
+          },
+          fullData: {
+            type: Object,
+            value: {}
+          },
+          // parentModelList: {
+          //   type: Array,
+          //   value: []
+          // },
+          parentModelList: {
+            type: Array,
+            value: ['item 1', 'item 2', 'item 3']
+          },
+          selectedParentModel: {
+            type: String
+          },
+          selectedView: {
+            type: String,
+            value: 'data-view'
+          },
+          selectedParentModel: {
+            type: String
+          },
+          selectedForce: {
+            type: String,
+            value: 'Fx'
+          },
+          forceList: {
+            type: Array,
+            value: []
+          },
+          tableData: {
+            type: Array,
+            value: []
+          }
+        };
+      }
+      static get observers() {
+        return [
+          // '_parentModelChange(selectedParentModel)'
+          // '_selectedForceChanged(selectedForce)'
+        ]
+      }
+      ready() {
+        super.ready();
+        // this.$['get-data'].generateRequest();
+      }
+
+      // handleGetDataResp(event, response) {
+      //   if (response.response) {
+      //     this.fullData = response.response
+      //     console.log(this.fullData);
+      //     // process the data and set the options
+      //     this.parentModelList = _.keys(this.fullData.payload);
+      //     console.log("parent model list");
+      //     console.log(this.parentModelList);
+      //     if (this.selectedParentModel === undefined) {
+      //       this.set('selectedParentModel', this.parentModelList[0])
+      //     }
+      //     this.isLoading = false
+      //   } else {
+      //     this.handleGetDataError();
+      //   }
+      // }
+      // handleGetDataError(event, response) {
+      //   this.isLoading = false;
+      //   alert("Error retrieving data")
+      // }
+
+      _prettify(str) {
+        return typeof str !== 'undefined' ? str.split('_').join(' ') : ""
+      }
+
+      // _parentModelChange(_selectedParentModel) {
+      //   console.log("info for selected parent model");
+      //   this.selectedModelResp = this.fullData.payload[this.selectedParentModel]
+      //   console.log(this.selectedModelResp)
+      //   this.set('tableData', this.selectedModelResp)
+      //   //loadcases for selected parent model below
+      //   console.log(_.keys(this.selectedModelResp.loadcases))
+      //   //don't hard-code, edit this
+      //   this.forceList = ['Fx', 'Fy', 'Fz']
+      //   if (this.selectedForce === undefined) {
+      //     this.set('selectedForce', this.forceList[0])
+      //   }
+      // }
+
+      _selectedForceChanged(_selectedForce) {
+
+      }
+
+      pluckColumns(_tableData) {
+        return _tableData.models
+      }
+
+
+    }
+
+    window.customElements.define(ModelSummariesTrackerApp.is, ModelSummariesTrackerApp);
+  </script>
+</dom-module>
