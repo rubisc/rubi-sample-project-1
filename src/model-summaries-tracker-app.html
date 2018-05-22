@@ -102,8 +102,9 @@
         <app-header-layout has-scrolling-region>
           <app-header slot="header" medium-tall>
             <app-toolbar>
-              <div main-title>Trying AUTH</div>
+              <div main-title>Trying Sample App with Auth</div>
               <paper-item>Build Dates</paper-item>
+              <paper-item style="cursor:pointer;" on-tap="logout">Logout</paper-item>
               <!-- <paper-item>FE: [[frontEndBuildDate]]</paper-item>
               <paper-item>BE: [[backendBuildDate]]</paper-item> -->
             </app-toolbar>
@@ -131,16 +132,16 @@
                   </paper-listbox>
                 </paper-dropdown-menu>
               </div>
-              <paper-card heading="Summary" class="data-info-cards">
-                <vaadin-grid class="summary-table" items="[[tableData]]">
+              <!-- <paper-card heading="Test" class="data-info-cards"> -->
+                <!-- <vaadin-grid class="summary-table" items="[[tableData]]">
                     <template is="dom-repeat" items="[[pluckColumns(tableData)]]" as="column">
                       <vaadin-grid-column width="100px">
-                        <!-- <template class="header">[[_prettify(column)]]</template>
-                        <template>[[ pluckValue(tableData) ]]</template> -->
+                        <template class="header">[[_prettify(column)]]</template>
+                        <template>[[ pluckValue(tableData) ]]</template>
                       </vaadin-grid-column>
                     </template>
-                  </vaadin-grid>
-              </paper-card>
+                  </vaadin-grid> -->
+              <!-- </paper-card> -->
             </div>
           </div>
           <!-- Chart Tab -->
@@ -205,7 +206,7 @@
           },
           forceList: {
             type: Array,
-            value: []
+            value: ['item 1', 'item 2', 'item 3']
           },
           tableData: {
             type: Array,
@@ -222,6 +223,10 @@
       ready() {
         super.ready();
         // this.$['get-data'].generateRequest();
+      }
+
+      logout() {
+        this.dispatchEvent(new CustomEvent('logout', {bubbles: true, composed: true}))
       }
 
       // handleGetDataResp(event, response) {

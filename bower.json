@@ -5,6 +5,7 @@
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
     "app-layout": "PolymerElements/app-layout#^2.0.5",
+    "cognito-helper": "lakopite/cognito-helper#master",
     "iron-ajax": "PolymerElements/iron-ajax#^2.1.1",
     "iron-image": "PolymerElements/iron-image#^2.1.2",
     "iron-pages": "PolymerElements/iron-pages#^2.0.1",
@@ -14,6 +15,7 @@
     "paper-spinner": "PolymerElements/paper-spinner#^2.0.0",
     "paper-styles": "PolymerElements/paper-styles#^2.0.0",
     "paper-tabs": "PolymerElements/paper-tabs#^2.0.0",
+    "paper-toast": "PolymerElements/paper-toast#^2.0.0",
     "vaadin-grid": "^4.1.5",
     "highcharts": "^6.0.7",
     "neon-animation": "PolymerElements/neon-animation#^2.1.0",
