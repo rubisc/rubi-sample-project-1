@@ -1,5 +1,4 @@
-<!-- dependencies for all -->
-<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<!-- dependencies for all --><link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
@@ -76,11 +75,11 @@
     <template is="dom-if" if="{{isLoading}}">
       <paper-card id="loadingData">
         <h3>Loading data, please wait</h3>
-        <paper-spinner active></paper-spinner>
+        <paper-spinner active=""></paper-spinner>
       </paper-card>
     </template>
     <template is="dom-if" if="{{!isLoading}}">
-      <app-drawer-layout fullbleed>
+      <app-drawer-layout fullbleed="">
       <!-- Drawer content -->
         <app-drawer id="drawer" slot="drawer">
             <div style="height: 100%; overflow: auto;">
@@ -99,17 +98,17 @@
             </div>
           </app-drawer>
         <!-- Main content -->
-        <app-header-layout has-scrolling-region>
-          <app-header slot="header" medium-tall>
+        <app-header-layout has-scrolling-region="">
+          <app-header slot="header" medium-tall="">
             <app-toolbar>
-              <div main-title>Sample App with Auth</div>
-              <paper-item>Build Date: 5/22</paper-item>
+              <div main-title="">Sample App with Auth</div>
+              <paper-item>Build Dates</paper-item>
               <paper-item style="cursor:pointer;" on-tap="logout">Logout</paper-item>
               <!-- <paper-item>FE: [[frontEndBuildDate]]</paper-item>
               <paper-item>BE: [[backendBuildDate]]</paper-item> -->
             </app-toolbar>
             <app-toolbar>
-            <paper-tabs bottom-item attr-for-selected="name" selected="{{selectedView}}">
+            <paper-tabs bottom-item="" attr-for-selected="name" selected="{{selectedView}}">
               <paper-tab name="data-view">Data</paper-tab>
               <paper-tab name="chart-view">Chart</paper-tab>
               <paper-tab name="faq-view">FAQ</paper-tab>
@@ -122,7 +121,7 @@
             <div class="data-content">
               <div class="data-wrapper">
                 <app-toolbar class="aggregation-toolbar">
-                  <div main-title>Data Overview</div>
+                  <div main-title="">Data Overview</div>
                 </app-toolbar>
                 <paper-dropdown-menu id="force-dropdown" label="Select Force">
                   <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{selectedForce}}">
@@ -157,128 +156,127 @@
     </template>
   </template>
 
-  <script>
-    /**
-     * @customElement
-     * @polymer
-     */
-    class ModelSummariesTrackerApp extends Polymer.Element {
-      static get is() { return 'model-summaries-tracker-app'; }
-      static get properties() {
-        return {
-          prop1: {
-            type: String,
-            value: 'model-summaries-tracker-app'
-          },
-          // isLoading: {
-          //   type: Boolean,
-          //   value: true
-          // },
-          isLoading: {
-            type: Boolean,
-            value: false
-          },
-          fullData: {
-            type: Object,
-            value: {}
-          },
-          // parentModelList: {
-          //   type: Array,
-          //   value: []
-          // },
-          parentModelList: {
-            type: Array,
-            value: ['item 1', 'item 2', 'item 3']
-          },
-          selectedParentModel: {
-            type: String
-          },
-          selectedView: {
-            type: String,
-            value: 'data-view'
-          },
-          selectedParentModel: {
-            type: String
-          },
-          selectedForce: {
-            type: String,
-            value: 'Fx'
-          },
-          forceList: {
-            type: Array,
-            value: ['item 1', 'item 2', 'item 3']
-          },
-          tableData: {
-            type: Array,
-            value: []
-          }
-        };
+  <script>/**
+ * @customElement
+ * @polymer
+ */
+class ModelSummariesTrackerApp extends Polymer.Element {
+  static get is() {
+    return 'model-summaries-tracker-app';
+  }
+
+  static get properties() {
+    return {
+      prop1: {
+        type: String,
+        value: 'model-summaries-tracker-app'
+      },
+      // isLoading: {
+      //   type: Boolean,
+      //   value: true
+      // },
+      isLoading: {
+        type: Boolean,
+        value: false
+      },
+      fullData: {
+        type: Object,
+        value: {}
+      },
+      // parentModelList: {
+      //   type: Array,
+      //   value: []
+      // },
+      parentModelList: {
+        type: Array,
+        value: ['item 1', 'item 2', 'item 3']
+      },
+      selectedParentModel: {
+        type: String
+      },
+      selectedView: {
+        type: String,
+        value: 'data-view'
+      },
+      selectedParentModel: {
+        type: String
+      },
+      selectedForce: {
+        type: String,
+        value: 'Fx'
+      },
+      forceList: {
+        type: Array,
+        value: ['item 1', 'item 2', 'item 3']
+      },
+      tableData: {
+        type: Array,
+        value: []
       }
-      static get observers() {
-        return [
-          // '_parentModelChange(selectedParentModel)'
-          // '_selectedForceChanged(selectedForce)'
-        ]
-      }
-      ready() {
-        super.ready();
-        // this.$['get-data'].generateRequest();
-      }
+    };
+  }
 
-      logout() {
-        this.dispatchEvent(new CustomEvent('logout', {bubbles: true, composed: true}))
-      }
+  static get observers() {
+    return [// '_parentModelChange(selectedParentModel)'
+      // '_selectedForceChanged(selectedForce)'
+    ];
+  }
 
-      // handleGetDataResp(event, response) {
-      //   if (response.response) {
-      //     this.fullData = response.response
-      //     console.log(this.fullData);
-      //     // process the data and set the options
-      //     this.parentModelList = _.keys(this.fullData.payload);
-      //     console.log("parent model list");
-      //     console.log(this.parentModelList);
-      //     if (this.selectedParentModel === undefined) {
-      //       this.set('selectedParentModel', this.parentModelList[0])
-      //     }
-      //     this.isLoading = false
-      //   } else {
-      //     this.handleGetDataError();
-      //   }
-      // }
-      // handleGetDataError(event, response) {
-      //   this.isLoading = false;
-      //   alert("Error retrieving data")
-      // }
+  ready() {
+    super.ready(); // this.$['get-data'].generateRequest();
+  }
 
-      _prettify(str) {
-        return typeof str !== 'undefined' ? str.split('_').join(' ') : ""
-      }
-
-      // _parentModelChange(_selectedParentModel) {
-      //   console.log("info for selected parent model");
-      //   this.selectedModelResp = this.fullData.payload[this.selectedParentModel]
-      //   console.log(this.selectedModelResp)
-      //   this.set('tableData', this.selectedModelResp)
-      //   //loadcases for selected parent model below
-      //   console.log(_.keys(this.selectedModelResp.loadcases))
-      //   //don't hard-code, edit this
-      //   this.forceList = ['Fx', 'Fy', 'Fz']
-      //   if (this.selectedForce === undefined) {
-      //     this.set('selectedForce', this.forceList[0])
-      //   }
-      // }
-
-      _selectedForceChanged(_selectedForce) {
-
-      }
-
-      pluckColumns(_tableData) {
-        return _tableData.models
-      }
+  logout() {
+    this.dispatchEvent(new CustomEvent('logout', {
+      bubbles: true,
+      composed: true
+    }));
+  } // handleGetDataResp(event, response) {
+  //   if (response.response) {
+  //     this.fullData = response.response
+  //     console.log(this.fullData);
+  //     // process the data and set the options
+  //     this.parentModelList = _.keys(this.fullData.payload);
+  //     console.log("parent model list");
+  //     console.log(this.parentModelList);
+  //     if (this.selectedParentModel === undefined) {
+  //       this.set('selectedParentModel', this.parentModelList[0])
+  //     }
+  //     this.isLoading = false
+  //   } else {
+  //     this.handleGetDataError();
+  //   }
+  // }
+  // handleGetDataError(event, response) {
+  //   this.isLoading = false;
+  //   alert("Error retrieving data")
+  // }
 
 
-    }
+  _prettify(str) {
+    return typeof str !== 'undefined' ? str.split('_').join(' ') : "";
+  } // _parentModelChange(_selectedParentModel) {
+  //   console.log("info for selected parent model");
+  //   this.selectedModelResp = this.fullData.payload[this.selectedParentModel]
+  //   console.log(this.selectedModelResp)
+  //   this.set('tableData', this.selectedModelResp)
+  //   //loadcases for selected parent model below
+  //   console.log(_.keys(this.selectedModelResp.loadcases))
+  //   //don't hard-code, edit this
+  //   this.forceList = ['Fx', 'Fy', 'Fz']
+  //   if (this.selectedForce === undefined) {
+  //     this.set('selectedForce', this.forceList[0])
+  //   }
+  // }
 
-    window.customElements.define(ModelSummariesTrackerApp.is, ModelSummariesTrackerApp);
-  </script>
+
+  _selectedForceChanged(_selectedForce) {}
+
+  pluckColumns(_tableData) {
+    return _tableData.models;
+  }
+
+}
+
+window.customElements.define(ModelSummariesTrackerApp.is, ModelSummariesTrackerApp);</script>
 </dom-module>

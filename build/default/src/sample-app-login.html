@@ -1,0 +1,83 @@
+@license
+<!--
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/cognito-helper/cognito-helper.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="model-summaries-tracker-app.html">
+
+<dom-module id="sample-app-login">
+  <template>
+    <style>
+      :host {
+        --app-primary-color: #4285f4;
+        --app-secondary-color: black;
+        display: block;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      .login-container {
+        @apply(--layout-fit);
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      }
+
+      .login-container cognito-helper {
+        @apply(--layout-self-center);
+      }
+    </style>
+    <paper-toast id="auth-failure-toast">Authentication Failed</paper-toast>
+    <div hidden$="[[loggedIn]]" class="login-container">
+      <cognito-helper id="cognito-helper-el" api-headers="{{apiHeaders}}" logged-in="{{loggedIn}}" auth-welcome="Sample App Login" user-pool-id="[[upid]]" client-id="[[cid]]"></cognito-helper>
+    </div>
+    <template is="dom-if" restamp="" if="[[loggedIn]]">
+      <model-summaries-tracker-app auth-headers="{{apiHeaders}}"></model-summaries-tracker-app>
+    </template>
+  </template>
+  <script>class SampleAppLogin extends Polymer.Element {
+  static get is() {
+    return 'sample-app-login';
+  }
+
+  static get properties() {
+    return {
+      upid: {
+        type: String,
+        value: _USERPOOL_ID_
+      },
+      cid: {
+        type: String,
+        value: _CLIENT_ID_
+      }
+    };
+  }
+
+  ready() {
+    super.ready();
+    this.addEventListener('authFailure', e => this._authFailure(e));
+    this.addEventListener('logout', e => this._logout(e));
+  }
+
+  _logout() {
+    this.$['cognito-helper-el'].logout();
+    window.location.reload(false);
+  }
+
+  _authFailure() {
+    this.$['auth-failure-toast'].open();
+  }
+
+}
+
+window.customElements.define(SampleAppLogin.is, SampleAppLogin);</script>
+</dom-module>
